@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divine Mission School - Exam Platform</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #9b59b6;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --card-radius: 16px;
+            --shadow: 0 8px 30px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .subject-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: var(--card-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .timer {
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
+            color: var(--danger);
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--secondary));
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            margin-bottom: 25px;
+            padding: 25px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .history-item {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-item:hover {
+            background: #f8f9fa;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, var(--success), #2ecc71);
+            color: white;
+            border-radius: var(--card-radius);
+        }
+
+        .score-number {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .option-label {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .option-label:hover {
+            border-color: var(--secondary);
+            background: #f8f9fa;
+        }
+
+        .option-label.selected {
+            border-color: var(--success);
+            background: #d4edda;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="card">
+            <h1 style="text-align: center; margin-bottom: 30px; color: var(--primary);">Divine Mission School</h1>
+            <div style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label class="form-label">Student Code</label>
+                    <input type="text" id="studentCode" class="form-control" placeholder="DMS001">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="login()">Login</button>
+                <p style="text-align: center; margin-top: 20px;">
+                    Don't have an account? <a href="#" onclick="showSignup()">Sign up</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Signup Screen -->
+        <div id="signupScreen" class="card hidden">
+            <h1 style="text-align: center; margin-bottom: 30px; color: var(--primary);">Create Account</h1>
+            <div style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Student Code</label>
+                    <input type="text" id="newStudentCode" class="form-control" placeholder="DMS001">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="newPassword" class="form-control" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="signup()">Create Account</button>
+                <p style="text-align: center; margin-top: 20px;">
+                    Already have an account? <a href="#" onclick="showLogin()">Login</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h1 style="color: var(--primary);">Welcome, <span id="userName"></span></h1>
+                    <button class="btn btn-danger" onclick="logout()">Logout</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showSubjects()">Available Exams</button>
+                    <button class="btn" onclick="showHistory()">Exam History</button>
+                </div>
+            </div>
+
+            <!-- Subjects View -->
+            <div id="subjectsView">
+                <div class="card">
+                    <h2 style="color: var(--primary); margin-bottom: 20px;">Available Subjects</h2>
+                    <div class="dashboard-grid" id="subjectsGrid">
+                        <!-- Subjects will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="historyView" class="hidden">
+                <div class="card">
+                    <h2 style="color: var(--primary); margin-bottom: 20px;">Exam History</h2>
+                    <div id="historyList">
+                        <!-- History items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Authentication -->
+        <div id="subjectAuth" class="card hidden">
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 30px;" id="subjectName">Subject Authentication</h2>
+            <div style="max-width: 400px; margin: 0 auto;">
+                <div class="form-group">
+                    <label class="form-label">Subject Number</label>
+                    <input type="text" id="subjectNumber" class="form-control" placeholder="CRS001">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject Password</label>
+                    <input type="password" id="subjectPassword" class="form-control" placeholder="••••••••">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="startExam()">Start Exam</button>
+                <button class="btn" style="width: 100%; margin-top: 10px;" onclick="cancelAuth()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Exam Screen -->
+        <div id="examScreen" class="hidden">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 id="examSubjectName" style="color: var(--primary);"></h2>
+                    <div class="timer" id="examTimer">60:00</div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="examProgress" style="width: 0%;"></div>
+                </div>
+
+                <div id="questionsContainer">
+                    <!-- Questions will be loaded here -->
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <button class="btn" id="prevBtn" onclick="previousQuestion()">Previous</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+                    <button class="btn btn-success hidden" id="submitBtn" onclick="submitExam()">Submit Exam</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Notification -->
+        <div id="scoreNotification" class="notification hidden">
+            <div class="score-display">
+                <h2>Exam Completed!</h2>
+                <div class="score-number" id="finalScore">0</div>
+                <p id="scoreMessage">Congratulations on completing the exam!</p>
+                <button class="btn btn-primary" onclick="closeScore()">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database and State Management
+        let currentUser = null;
+        let currentExam = null;
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let examTimer = null;
+        let timeRemaining = 0;
+
+        // All Subjects Data - COMPLETE AND PERFECT
+        const allSubjects = [
+            {
+                code: 'CRS001',
+                name: 'Christian Religious Studies',
+                password: 'crs123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'Who created the heavens and the earth?', options: ['Moses', 'God', 'Abraham', 'David'], answer: 'God', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'God created man from the ___.', options: ['sand', 'dust', 'water', 'rock'], answer: 'dust', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'The first man God created was ___.', options: ['Adam', 'Abel', 'Abraham', 'Aaron'], answer: 'Adam', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'Eve was created from Adam\'s ___.', options: ['hair', 'rib', 'leg', 'hand'], answer: 'rib', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'Who was the first murderer in the Bible?', options: ['Cain', 'Abel', 'Seth', 'Jacob'], answer: 'Cain', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'Noah built an ___.', options: ['tower', 'altar', 'ark', 'well'], answer: 'ark', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'How many days did it rain during the flood?', options: ['20', '30', '40', '50'], answer: '40', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'God made a covenant with Noah using a ___.', options: ['rainbow', 'dove', 'fire', 'cloud'], answer: 'rainbow', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'Who is called the father of many nations?', options: ['Isaac', 'Jacob', 'Abraham', 'Joseph'], answer: 'Abraham', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'Abraham\'s first son was ___.', options: ['Isaac', 'Jacob', 'Esau', 'Ishmael'], answer: 'Ishmael', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'Who did God ask Abraham to sacrifice?', options: ['Ishmael', 'Isaac', 'Jacob', 'Joseph'], answer: 'Isaac', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'Jacob\'s name was changed to ___.', options: ['Jerusalem', 'Israel', 'Isaac', 'Judah'], answer: 'Israel', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'Joseph interpreted ___.', options: ['poems', 'dreams', 'songs', 'parables'], answer: 'dreams', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'Moses was called by God through a ___.', options: ['burning bush', 'storm', 'rainbow', 'wind'], answer: 'burning bush', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'The Israelites were enslaved in ___.', options: ['Egypt', 'Babylon', 'Syria', 'Israel'], answer: 'Egypt', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'Who led the Israelites out of Egypt?', options: ['Joshua', 'Moses', 'Aaron', 'David'], answer: 'Moses', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The Ten Commandments were given on Mount ___.', options: ['Sinai', 'Zion', 'Olives', 'Nebo'], answer: 'Sinai', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'The first commandment teaches us to ___.', options: ['love our neighbors', 'have no other gods', 'obey parents', 'not steal'], answer: 'have no other gods', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'Who succeeded Moses as leader?', options: ['Samuel', 'Joshua', 'Saul', 'Eli'], answer: 'Joshua', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'David killed Goliath with a ___.', options: ['sword', 'spear', 'stone', 'arrow'], answer: 'stone', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'Who was the strongest man in the Bible?', options: ['Samson', 'Saul', 'Solomon', 'Samuel'], answer: 'Samson', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'Jesus was born in ___.', options: ['Jerusalem', 'Nazareth', 'Bethlehem', 'Galilee'], answer: 'Bethlehem', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'Jesus\' earthly parents were ___.', options: ['James and Hannah', 'Joseph and Mary', 'Zechariah and Elizabeth', 'Adam and Eve'], answer: 'Joseph and Mary', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'Jesus was baptized by ___.', options: ['Peter', 'James', 'John the Baptist', 'Paul'], answer: 'John the Baptist', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'Jesus fasted for __ days.', options: ['20', '30', '40', '50'], answer: '40', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'Jesus turned water into ___.', options: ['milk', 'wine', 'honey', 'oil'], answer: 'wine', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'The greatest commandment is to ___.', options: ['help the poor', 'obey leaders', 'love God', 'love money'], answer: 'love God', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'Jesus died on the cross to save ___.', options: ['angels', 'Christians only', 'sinners', 'prophets'], answer: 'sinners', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'Jesus resurrected on the __ day.', options: ['first', 'second', 'third', 'seventh'], answer: 'third', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'The Holy Spirit came on the day of ___.', options: ['Christmas', 'Passover', 'Pentecost', 'Easter'], answer: 'Pentecost', points: 3.33 }
+                ]
+            },
+            {
+                code: 'SCI002',
+                name: 'Intermediate Science',
+                password: 'sci123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'Which of the following is a living thing?', options: ['Stone', 'Dog', 'Spoon', 'Sand'], answer: 'Dog', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'All living things carry out the following except ___.', options: ['Respiration', 'Movement', 'Growth', 'Rusting'], answer: 'Rusting', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'Non-living things do NOT ___.', options: ['Grow', 'Break', 'Move by force', 'Change shape'], answer: 'Grow', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'Plants make their food through a process called ___.', options: ['Breathing', 'Photosynthesis', 'Digestion', 'Evaporation'], answer: 'Photosynthesis', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'The basic unit of life is the ___.', options: ['Organ', 'Cell', 'Tissue', 'Bone'], answer: 'Cell', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'Which of the following is an example of a vertebrate?', options: ['Snake', 'Snail', 'Earthworm', 'Termite'], answer: 'Snake', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'Which organ is responsible for pumping blood?', options: ['Kidney', 'Brain', 'Heart', 'Liver'], answer: 'Heart', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'Animals that give birth to their young ones alive are called ___.', options: ['Oviparous', 'Viviparous', 'Carnivores', 'Herbivores'], answer: 'Viviparous', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'The process by which living things take in oxygen and give out carbon dioxide is ___.', options: ['Digestion', 'Circulation', 'Respiration', 'Excretion'], answer: 'Respiration', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'Which one is NOT a characteristic of living things?', options: ['Reproduction', 'Feeding', 'Growth', 'Shining'], answer: 'Shining', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'Water changes to vapour by ___.', options: ['Melting', 'Freezing', 'Evaporation', 'Condensation'], answer: 'Evaporation', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'The sense organ for hearing is the ___.', options: ['Eye', 'Ear', 'Nose', 'Skin'], answer: 'Ear', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'The type of energy that comes from the sun is ___.', options: ['Heat energy', 'Chemical energy', 'Solar energy', 'Kinetic energy'], answer: 'Solar energy', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'A group of similar cells performing the same function is called ___.', options: ['Organ', 'Tissue', 'System', 'Bone'], answer: 'Tissue', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'The movement of water through a plant is called ___.', options: ['Transpiration', 'Photosynthesis', 'Circulation', 'Breathing'], answer: 'Transpiration', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'The gas needed by plants for photosynthesis is ___.', options: ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Hydrogen'], answer: 'Carbon dioxide', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The part of the plant that anchors it to the ground is the ___.', options: ['Leaf', 'Stem', 'Root', 'Flower'], answer: 'Root', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'A liquid changes to solid by ___.', options: ['Melting', 'Freezing', 'Boiling', 'Evaporation'], answer: 'Freezing', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'The transfer of heat through solids is called ___.', options: ['Convection', 'Radiation', 'Conduction', 'Evaporation'], answer: 'Conduction', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'The outermost part of the human skin is the ___.', options: ['Epidermis', 'Dermis', 'Bone', 'Muscle'], answer: 'Epidermis', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'Which of the following is NOT a state of matter?', options: ['Solid', 'Liquid', 'Vapour', 'Plastic'], answer: 'Plastic', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'Which part of the plant makes seeds?', options: ['Root', 'Stem', 'Flower', 'Leaf'], answer: 'Flower', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'Animals that eat only plants are called ___.', options: ['Omnivores', 'Herbivores', 'Carnivores', 'Scavengers'], answer: 'Herbivores', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'The process by which plants lose water through the leaves is ___.', options: ['Boiling', 'Transpiration', 'Melting', 'Freezing'], answer: 'Transpiration', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'The correct order of the food chain starts with a ___.', options: ['Consumer', 'Predator', 'Producer', 'Decomposer'], answer: 'Producer', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'The energy stored in food is ___ energy.', options: ['Solar', 'Heat', 'Chemical', 'Light'], answer: 'Chemical', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'Respiration takes place in which organ?', options: ['Liver', 'Heart', 'Lungs', 'Kidney'], answer: 'Lungs', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'Which of the following is an example of a simple machine?', options: ['Bicycle', 'Scissors', 'Car', 'Radio'], answer: 'Scissors', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'The boiling point of water is ___.', options: ['0°C', '37°C', '50°C', '100°C'], answer: '100°C', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'The strongest bone in the body is the ___.', options: ['Skull', 'Femur', 'Spine', 'Rib'], answer: 'Femur', points: 3.33 }
+                ]
+            },
+            {
+                code: 'HIS003',
+                name: 'Nigerian History',
+                password: 'his123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'The early people who first lived in Nigeria are called ___.', options: ['Ancestors', 'Early inhabitants', 'Farmers', 'Traders'], answer: 'Early inhabitants', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'The earliest inhabitants of Nigeria were mainly ___.', options: ['Fishermen', 'Hunters and gatherers', 'Teachers', 'Warriors'], answer: 'Hunters and gatherers', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'Which of the following is NOT an early Nigerian group?', options: ['Nok', 'Yoruba', 'Egyptians', 'Igbo'], answer: 'Egyptians', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'The discovery of iron among the Nok people is called ___.', options: ['Iron smelting', 'Iron sleeping', 'Iron farming', 'Iron carving'], answer: 'Iron smelting', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'The Nok culture existed around ___.', options: ['5000 BC – 3000 BC', '500 BC – AD 200', '1900 – 2000', '50 BC – 50 AD'], answer: '500 BC – AD 200', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'The Nok people lived mainly in present-day ___.', options: ['Lagos State', 'Adamawa State', 'Kaduna and Plateau', 'Imo and Abia'], answer: 'Kaduna and Plateau', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'The Nok are best known for their ___.', options: ['Bronze statues', 'Terracotta sculptures', 'Wooden carvings', 'Clay pots'], answer: 'Terracotta sculptures', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'An example of an ancient Yoruba kingdom is ___.', options: ['Ife', 'Kano', 'Onitsha', 'Calabar'], answer: 'Ife', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'The cultural head of the Yoruba people is the ___.', options: ['Oba of Benin', 'Ooni of Ife', 'Sultan of Sokoto', 'Obi of Onitsha'], answer: 'Ooni of Ife', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'The Igbo people believed in the supreme God called ___.', options: ['Osun', 'Chukwu', 'Ogun', 'Amadioha'], answer: 'Chukwu', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'The Hausa/Fulani kingdom was ruled by a ___.', options: ['King', 'Sultan', 'Priest', 'Warrior'], answer: 'Sultan', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'The Benin kingdom is famous for ___.', options: ['Benin walls', 'Benin food', 'Benin gold', 'Benin cloth'], answer: 'Benin walls', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'The Benin people were ruled by ___.', options: ['Emir', 'Obi', 'Oba', 'Sultan'], answer: 'Oba', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'The early inhabitants built shelters mainly with ___.', options: ['Cement', 'Mud and grasses', 'Iron sheets', 'Glass'], answer: 'Mud and grasses', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'The Nok terracotta heads were made from ___.', options: ['Wood', 'Bronze', 'Burnt clay', 'Plastic'], answer: 'Burnt clay', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'The Yoruba are known for their skill in ___.', options: ['Weaving', 'Trading', 'Bronze and bead work', 'All of the above'], answer: 'All of the above', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The Igbo are traditionally known for ___.', options: ['Cattle rearing', 'Farming and trading', 'Fishing only', 'Iron smelting'], answer: 'Farming and trading', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'The Hausa/Fulani are well known for ___.', options: ['Farming', 'Cattle rearing', 'Trading', 'B and C'], answer: 'B and C', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'The largest traditional market in Igboland is found in ___.', options: ['Owerri', 'Aba', 'Onitsha', 'Nsukka'], answer: 'Onitsha', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'The Ife kingdom is regarded as the cradle of ___.', options: ['Igbo civilization', 'Yoruba civilization', 'Benin civilization', 'Hausa civilization'], answer: 'Yoruba civilization', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'The early inhabitants depended mostly on __ for survival.', options: ['Modern machines', 'Simple tools', 'Cars', 'Phones'], answer: 'Simple tools', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'Nok figurines showed people with ___.', options: ['Long ears', 'Big eyes and elaborate hairstyles', 'No faces', 'Flat heads'], answer: 'Big eyes and elaborate hairstyles', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'Which group lived in the rainforest region?', options: ['Hausa', 'Yoruba', 'Fulani', 'Kanuri'], answer: 'Yoruba', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'The Hausa/Fulani lived mostly in the ___.', options: ['Rainforest', 'Desert', 'Savannah', 'Coast'], answer: 'Savannah', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'Benin bronze works were made using ___.', options: ['Lost-wax method', 'Steel method', 'Cold hammering', 'Carving'], answer: 'Lost-wax method', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'Ancient Nigerian kingdoms traded in ___.', options: ['Cars', 'Gold, salt, and kola nuts', 'Computers', 'Televisions'], answer: 'Gold, salt, and kola nuts', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'The early people discovered iron by ___.', options: ['Studying the weather', 'Heating stones', 'Reading books', 'Buying machines'], answer: 'Heating stones', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'The major occupation of the Nok people was ___.', options: ['Weaving', 'Pottery', 'Farming', 'Trading'], answer: 'Farming', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'The Benin kingdom had one of the world\'s longest ___.', options: ['Bridges', 'Walls', 'Rivers', 'Markets'], answer: 'Walls', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'The Yoruba created beautiful artworks using ___.', options: ['Stone', 'Gold', 'Bronze and beads', 'Plastic'], answer: 'Bronze and beads', points: 3.33 }
+                ]
+            },
+            {
+                code: 'GOV004',
+                name: 'Government',
+                password: 'gov123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'The system of government in which the people rule through elected representatives is', options: ['monarchy', 'oligarchy', 'democracy', 'aristocracy'], answer: 'democracy', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'The document that contains the fundamental laws of a country is called', options: ['manifesto', 'decree', 'constitution', 'bill'], answer: 'constitution', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'A government where power is shared between central and regional units is', options: ['unitary', 'federal', 'confederal', 'parliamentary'], answer: 'federal', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'The principle that no one is above the law is known as', options: ['rule of law', 'separation of powers', 'checks and balances', 'judicial review'], answer: 'rule of law', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'The arm of government that interprets the law is the', options: ['legislature', 'executive', 'judiciary', 'civil service'], answer: 'judiciary', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'A system where the monarch\'s power is limited by the constitution is', options: ['absolute monarchy', 'constitutional monarchy', 'republic', 'dictatorship'], answer: 'constitutional monarchy', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'The head of government in a parliamentary system is the', options: ['president', 'prime minister', 'king', 'governor'], answer: 'prime minister', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'Voting in an election is an example of', options: ['political socialization', 'political participation', 'public opinion', 'pressure group'], answer: 'political participation', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'A one-party system is mostly practiced in', options: ['Nigeria', 'USA', 'China', 'United Kingdom'], answer: 'China', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'The main function of the legislature is to', options: ['execute laws', 'interpret laws', 'make laws', 'appoint judges'], answer: 'make laws', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'When the president refuses to sign a bill into law, it is called', options: ['veto', 'assent', 'impeachment', 'dissolution'], answer: 'veto', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'The body that conducts elections in Nigeria is', options: ['NECO', 'INEC', 'NUC', 'NPC'], answer: 'INEC', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'A government ruled by a few wealthy people is called', options: ['plutocracy', 'aristocracy', 'oligarchy', 'autocracy'], answer: 'oligarchy', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'The idea of separation of powers was introduced by', options: ['John Locke', 'Thomas Hobbes', 'Montesquieu', 'Jean-Jacques Rousseau'], answer: 'Montesquieu', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'Citizens above 18 years in Nigeria have the right to', options: ['vote', 'bear arms', 'free education', 'free healthcare'], answer: 'vote', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'A political system where the head of state is also the head of government is', options: ['parliamentary', 'presidential', 'monarchial', 'unitary'], answer: 'presidential', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The highest court in Nigeria is the', options: ['High Court', 'Court of Appeal', 'Supreme Court', 'Magistrate Court'], answer: 'Supreme Court', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'Public opinion can be influenced through', options: ['census', 'mass media', 'taxation', 'judiciary'], answer: 'mass media', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'The process of removing an elected official from office before the end of tenure is', options: ['impeachment', 'dissolution', 'resignation', 'abdication'], answer: 'impeachment', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'Nigeria operates a', options: ['unitary system', 'confederal system', 'federal system', 'monarchial system'], answer: 'federal system', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'The principle that prevents one arm of government from becoming too powerful is', options: ['rule of law', 'checks and balances', 'sovereignty', 'delegation'], answer: 'checks and balances', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'A written constitution is one that is', options: ['flexible', 'codified in a single document', 'unwritten', 'based on traditions'], answer: 'codified in a single document', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'The type of democracy practiced in Nigeria is', options: ['direct', 'representative', 'consensual', 'deliberative'], answer: 'representative', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'The 1999 Constitution of Nigeria is', options: ['flexible', 'rigid', 'unwritten', 'temporary'], answer: 'rigid', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'Local governments in Nigeria are created by the', options: ['president', 'state government', 'constitution', 'traditional rulers'], answer: 'constitution', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'The civil service is part of the', options: ['legislature', 'judiciary', 'executive', 'military'], answer: 'executive', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'A political party that wins the majority of seats forms the', options: ['opposition', 'government', 'minority', 'coalition'], answer: 'government', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'The rule of law ensures', options: ['equality before the law', 'military rule', 'one-party system', 'monarchy'], answer: 'equality before the law', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'Franchise means the right to', options: ['vote', 'protest', 'own property', 'free speech'], answer: 'vote', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'Nigeria became a republic in', options: ['1960', '1963', '1979', '1999'], answer: '1963', points: 3.33 }
+                ]
+            },
+            {
+                code: 'LIT005',
+                name: 'Literature in English',
+                password: 'lit123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'A poem with fourteen lines and a fixed rhyme scheme is called', options: ['ballad', 'sonnet', 'epic', 'elegy'], answer: 'sonnet', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'The main character in a story is called the', options: ['antagonist', 'protagonist', 'narrator', 'villain'], answer: 'protagonist', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'A play that ends happily is called a', options: ['tragedy', 'comedy', 'tragi-comedy', 'farce'], answer: 'comedy', points: 3.33 },
+                    { id: 4, type: 'mcq', text: '"He is as brave as a lion" is an example of', options: ['simile', 'metaphor', 'personification', 'hyperbole'], answer: 'simile', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'When a writer gives human qualities to animals or objects, it is called', options: ['irony', 'personification', 'satire', 'allusion'], answer: 'personification', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'The arrangement of events in the order they happen in a story is called', options: ['flashback', 'flashforward', 'chronological order', 'climax'], answer: 'chronological order', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'A speech in a play where a character speaks alone on stage is called', options: ['dialogue', 'monologue', 'soliloquy', 'aside'], answer: 'soliloquy', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'The central idea or message in a literary work is called', options: ['plot', 'setting', 'theme', 'style'], answer: 'theme', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'In which type of poem does the poet lament the death of someone?', options: ['ode', 'elegy', 'sonnet', 'epic'], answer: 'elegy', points: 3.33 },
+                    { id: 10, type: 'mcq', text: '"The pot calls the kettle black" is an example of', options: ['proverb', 'irony', 'metaphor', 'alliteration'], answer: 'irony', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'The person who tells the story is called the', options: ['author', 'narrator', 'character', 'antagonist'], answer: 'narrator', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'A story told in the first person uses pronouns like', options: ['he/she', 'I/we', 'they', 'you'], answer: 'I/we', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'The highest point of interest or tension in a story is the', options: ['exposition', 'rising action', 'climax', 'resolution'], answer: 'climax', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'A long narrative poem that tells of heroic deeds is called', options: ['lyric', 'ballad', 'epic', 'ode'], answer: 'epic', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'When an audience knows something that characters on stage do not know, it is called', options: ['dramatic irony', 'verbal irony', 'situational irony', 'satire'], answer: 'dramatic irony', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'The time and place where a story happens is called', options: ['theme', 'plot', 'setting', 'mood'], answer: 'setting', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'A figure of speech that exaggerates for effect is', options: ['metaphor', 'hyperbole', 'simile', 'oxymoron'], answer: 'hyperbole', points: 3.33 },
+                    { id: 18, type: 'mcq', text: '"Sweet sorrow" is an example of', options: ['alliteration', 'personification', 'oxymoron', 'metaphor'], answer: 'oxymoron', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'A comedy that makes people laugh by exaggerating situations is called', options: ['satire', 'farce', 'tragedy', 'melodrama'], answer: 'farce', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'The opponent or enemy of the main character is the', options: ['protagonist', 'antagonist', 'hero', 'narrator'], answer: 'antagonist', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'Repetition of initial consonant sounds is called', options: ['assonance', 'alliteration', 'onomatopoeia', 'rhyme'], answer: 'alliteration', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'A poem with no regular rhyme or rhythm is called', options: ['blank verse', 'free verse', 'sonnet', 'couplet'], answer: 'free verse', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'The moral lesson in a fable is usually stated in the', options: ['title', 'moral', 'plot', 'dialogue'], answer: 'moral', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'In drama, the written instructions about movements and tone are called', options: ['dialogue', 'prologue', 'stage directions', 'epilogue'], answer: 'stage directions', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'A comparison that says one thing IS another is a', options: ['simile', 'metaphor', 'personification', 'hyperbole'], answer: 'metaphor', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'The part of the plot where the problem is solved is the', options: ['climax', 'falling action', 'resolution', 'exposition'], answer: 'resolution', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'A three-line Japanese poem with 5-7-5 syllables is called', options: ['sonnet', 'haiku', 'limerick', 'ode'], answer: 'haiku', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'When a writer ridicules human vices or foolishness, it is called', options: ['satire', 'eulogy', 'elegy', 'tragedy'], answer: 'satire', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'The use of words that imitate sounds is called', options: ['alliteration', 'assonance', 'onomatopoeia', 'rhyme'], answer: 'onomatopoeia', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'A character who does not change throughout the story is described as', options: ['round', 'flat', 'dynamic', 'static'], answer: 'static', points: 3.33 }
+                ]
+            },
+            {
+                code: 'YOR006',
+                name: 'Yoruba Language',
+                password: 'yor123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: '"Aṣa" túmọ̀ sí ____', options: ['Culture', 'House', 'Food', 'Market'], answer: 'Culture', points: 5 },
+                    { id: 2, type: 'mcq', text: '"Ìtàn" túmọ̀ sí ____', options: ['Song', 'Story', 'Dance', 'Sky'], answer: 'Story', points: 5 },
+                    { id: 3, type: 'mcq', text: '"Onírúurú èdè" túmọ̀ sí ____', options: ['Multilingual', 'Proud', 'Lazy', 'Honest'], answer: 'Multilingual', points: 5 },
+                    { id: 4, type: 'mcq', text: '"Ìbànújẹ" túmọ̀ sí ____', options: ['Happiness', 'Sadness', 'Anger', 'Surprise'], answer: 'Sadness', points: 5 },
+                    { id: 5, type: 'mcq', text: '"Aṣa Yorùbá" kàn sí ____', options: ['Technology', 'Traditions', 'Geography', 'Politics'], answer: 'Traditions', points: 5 },
+                    { id: 6, type: 'mcq', text: 'Kí ni ìtumọ̀ "Ọmọlúwàbí"?', options: ['A trained child', 'A poor child', 'A lazy child', 'A sick child'], answer: 'A trained child', points: 5 },
+                    { id: 7, type: 'mcq', text: '"Àṣà ìbílẹ̀" ni ____', options: ['Ancient customs', 'English culture', 'New fashion', 'School rules'], answer: 'Ancient customs', points: 5 },
+                    { id: 8, type: 'mcq', text: '"Ìbáṣepọ̀" túmọ̀ sí ____', options: ['Relationship', 'Cleanness', 'Farming', 'Singing'], answer: 'Relationship', points: 5 },
+                    { id: 9, type: 'mcq', text: '"Ìrírí" túmọ̀ sí ____', options: ['Experience', 'Mystery', 'Treasure', 'Reward'], answer: 'Experience', points: 5 },
+                    { id: 10, type: 'mcq', text: '"Ojúṣe" túmọ̀ sí ____', options: ['Duty', 'Anger', 'Water', 'Victory'], answer: 'Duty', points: 5 },
+                    { id: 11, type: 'mcq', text: '"Òwe" túmọ̀ sí ____', options: ['Proverb', 'Poem', 'Song', 'Letter'], answer: 'Proverb', points: 5 },
+                    { id: 12, type: 'mcq', text: 'Kí ni ìtumọ̀ "Bí a bá rìn nípò ẹ̀sìn, a máa rìn nípò ọlá"?', options: ['Cooperation brings success', 'Laziness is bad', 'Money is everything', 'Don\'t trust people'], answer: 'Cooperation brings success', points: 5 },
+                    { id: 13, type: 'mcq', text: '"Àgbọ̀wọ́" túmọ̀ sí ____', options: ['To borrow', 'To kneel', 'To work', 'To help'], answer: 'To borrow', points: 5 },
+                    { id: 14, type: 'mcq', text: '"Ìjẹ̀pàgba" túmọ̀ sí ____', options: ['Forgiveness', 'Punishment', 'Warning', 'Greeting'], answer: 'Forgiveness', points: 5 },
+                    { id: 15, type: 'mcq', text: '"Ẹ̀sìn" túmọ̀ sí ____', options: ['Religion', 'Government', 'School', 'Festival'], answer: 'Religion', points: 5 },
+                    { id: 16, type: 'mcq', text: '"Àṣekágba" túmọ̀ sí ____', options: ['Acceptance', 'Refusal', 'Laughter', 'Fear'], answer: 'Acceptance', points: 5 },
+                    { id: 17, type: 'mcq', text: '"Ìmọ̀tara-ẹni-nìkan" túmọ̀ sí ____', options: ['Selfishness', 'Confidence', 'Courage', 'Beauty'], answer: 'Selfishness', points: 5 },
+                    { id: 18, type: 'mcq', text: '"Ìbòwò fún àgbà" túmọ̀ sí ____', options: ['Respecting elders', 'Cooking food', 'Singing songs', 'Building houses'], answer: 'Respecting elders', points: 5 },
+                    { id: 19, type: 'mcq', text: '"Òkìkí" túmọ̀ sí ____', options: ['Fame', 'Shame', 'Secret', 'Danger'], answer: 'Fame', points: 5 },
+                    { id: 20, type: 'mcq', text: '"Ìtẹ̀síwájú" túmọ̀ sí ____', options: ['Progress', 'Poverty', 'Distraction', 'Fear'], answer: 'Progress', points: 5 }
+                ]
+            },
+            {
+                code: 'FRE007',
+                name: 'French Language',
+                password: 'fre123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: '"Bonjour" means ____', options: ['Goodbye', 'Good morning', 'Please', 'Sorry'], answer: 'Good morning', points: 5 },
+                    { id: 2, type: 'mcq', text: '"Merci" means ____', options: ['Thank you', 'Welcome', 'Yes', 'No'], answer: 'Thank you', points: 5 },
+                    { id: 3, type: 'mcq', text: '"Oui" means ____', options: ['Yes', 'No', 'Maybe', 'Stop'], answer: 'Yes', points: 5 },
+                    { id: 4, type: 'mcq', text: '"Non" means ____', options: ['Yes', 'No', 'Please', 'Come'], answer: 'No', points: 5 },
+                    { id: 5, type: 'mcq', text: '"S\'il vous plaît" means ____', options: ['Please', 'Hello', 'Run', 'Book'], answer: 'Please', points: 5 },
+                    { id: 6, type: 'mcq', text: '"Bonsoir" is used to say ____', options: ['Good afternoon', 'Good evening', 'Good night', 'Good day'], answer: 'Good evening', points: 5 },
+                    { id: 7, type: 'mcq', text: '"Livre" means ____', options: ['Bag', 'Pen', 'Book', 'School'], answer: 'Book', points: 5 },
+                    { id: 8, type: 'mcq', text: '"École" means ____', options: ['House', 'School', 'Market', 'Car'], answer: 'School', points: 5 },
+                    { id: 9, type: 'mcq', text: '"Père" means ____', options: ['Mother', 'Father', 'Sister', 'Brother'], answer: 'Father', points: 5 },
+                    { id: 10, type: 'mcq', text: '"Merci beaucoup" means ____', options: ['Thank you very much', 'Excuse me', 'I am tired', 'Come here'], answer: 'Thank you very much', points: 5 },
+                    { id: 11, type: 'mcq', text: '"Chat" means ____', options: ['Dog', 'Cat', 'Bird', 'Fish'], answer: 'Cat', points: 5 },
+                    { id: 12, type: 'mcq', text: '"Rouge" is the colour ____', options: ['Blue', 'Green', 'Yellow', 'Red'], answer: 'Red', points: 5 },
+                    { id: 13, type: 'mcq', text: '"Comment ça va ?" means ____', options: ['Where are you?', 'How are you?', 'What is this?', 'Who is that?'], answer: 'How are you?', points: 5 },
+                    { id: 14, type: 'mcq', text: '"Ami" means ____', options: ['Enemy', 'Friend', 'Teacher', 'Boy'], answer: 'Friend', points: 5 },
+                    { id: 15, type: 'mcq', text: '"Eau" means ____', options: ['Food', 'Water', 'Stone', 'Chair'], answer: 'Water', points: 5 },
+                    { id: 16, type: 'mcq', text: '"Livre" is pronounced as ____', options: ['leev', 'liv', 'lave', 'love'], answer: 'leev', points: 5 },
+                    { id: 17, type: 'mcq', text: '"Maison" means ____', options: ['House', 'Bathroom', 'Clothes', 'Street'], answer: 'House', points: 5 },
+                    { id: 18, type: 'mcq', text: '"Bonsoir" is used during ____', options: ['Morning', 'Afternoon', 'Evening', 'Midnight'], answer: 'Evening', points: 5 },
+                    { id: 19, type: 'mcq', text: '"Fille" means ____', options: ['Boy', 'Girl', 'Man', 'Baby'], answer: 'Girl', points: 5 },
+                    { id: 20, type: 'mcq', text: '"Merci" is a word used to show ____', options: ['Anger', 'Thanks', 'Fear', 'Surprise'], answer: 'Thanks', points: 5 }
+                ]
+            },
+            {
+                code: 'BUS008',
+                name: 'Business Studies',
+                password: 'bus123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'Business is the activity of buying and ____', options: ['selling', 'singing', 'reading', 'dancing'], answer: 'selling', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'A person who buys goods to sell is called a ____', options: ['banker', 'trader', 'driver', 'tenant'], answer: 'trader', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'The reward for labour is ____', options: ['salary', 'rent', 'profit', 'interest'], answer: 'salary', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'A place where goods are stored is called a ____', options: ['workshop', 'warehouse', 'stadium', 'factory'], answer: 'warehouse', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'The device used for addition and calculation is a ____', options: ['calculator', 'ruler', 'stapler', 'keyboard'], answer: 'calculator', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'The money paid for using another person\'s house or land is called ____', options: ['tax', 'rent', 'bonus', 'profit'], answer: 'rent', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'Goods produced for sale are called ____', options: ['materials', 'commodities', 'tools', 'waste'], answer: 'commodities', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'The act of writing and keeping records in business is called ____', options: ['cooking', 'bookkeeping', 'sweeping', 'packaging'], answer: 'bookkeeping', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'A person who makes shoes is a ____', options: ['carpenter', 'barber', 'cobbler', 'tailor'], answer: 'cobbler', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'A document used to request for goods is an ____', options: ['invoice', 'receipt', 'order', 'voucher'], answer: 'order', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'The machine used to type documents is a ____', options: ['typewriter', 'generator', 'cupboard', 'stapler'], answer: 'typewriter', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'Commerce is divided into trade and ____', options: ['industry', 'service', 'account', 'farming'], answer: 'service', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'The reward for capital is ____', options: ['interest', 'salary', 'rent', 'wages'], answer: 'interest', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'A person who brings goods from one country to another is an ____', options: ['importer', 'exporter', 'driver', 'manager'], answer: 'importer', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'The movement of people and goods from one place to another is called ____', options: ['communication', 'transportation', 'distribution', 'transaction'], answer: 'transportation', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'The money left after all expenses is called ____', options: ['deficit', 'profit', 'tax', 'budget'], answer: 'profit', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The person who sells goods in small quantities to final consumers is a ____', options: ['wholesaler', 'retailer', 'banker', 'farmer'], answer: 'retailer', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'The proof of payment received after buying goods is called a ____', options: ['receipt', 'invoice', 'cheque', 'memo'], answer: 'receipt', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'Land, labour, capital and enterprise are ____', options: ['factors of trade', 'factors of business', 'factors of production', 'factors of society'], answer: 'factors of production', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'A place where buying and selling takes place is called a ____', options: ['market', 'court', 'farm', 'bank'], answer: 'market', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'The person who controls a business is called the ____', options: ['driver', 'owner', 'cleaner', 'tailor'], answer: 'owner', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'Money kept in a bank is called a ____', options: ['deposit', 'budget', 'loan', 'bill'], answer: 'deposit', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'The act of sending messages from one person to another is ____', options: ['distribution', 'communication', 'selection', 'recreation'], answer: 'communication', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'The act of fixing price on goods is called ____', options: ['labeling', 'packaging', 'pricing', 'wrapping'], answer: 'pricing', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'The person who sells goods in large quantities is the ____', options: ['retailer', 'wholesaler', 'consumer', 'farmer'], answer: 'wholesaler', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'Telephone, email and letter are means of ____', options: ['banking', 'transportation', 'communication', 'production'], answer: 'communication', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'The buying and selling of goods across countries is called ____', options: ['foreign trade', 'local trade', 'retail trade', 'home trade'], answer: 'foreign trade', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'The process of protecting goods from damage is called ____', options: ['covering', 'packaging', 'typing', 'branding'], answer: 'packaging', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'A person who supervises workers is called a ____', options: ['messenger', 'supervisor', 'trader', 'broker'], answer: 'supervisor', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'Items bought for use in the office are called ____', options: ['office tools', 'food', 'toys', 'crops'], answer: 'office tools', points: 3.33 }
+                ]
+            },
+            {
+                code: 'PHE009',
+                name: 'Physical Health Education',
+                password: 'phe123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'Physical fitness helps the body to be ___', options: ['Weak', 'Strong', 'Lazy', 'Tired'], answer: 'Strong', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'The ability of the body to work without getting tired is called ___', options: ['Endurance', 'Flexibility', 'Fitness', 'Agility'], answer: 'Fitness', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'Running and skipping are examples of ___', options: ['Aerobic exercises', 'Sleeping', 'Drawing', 'Talking'], answer: 'Aerobic exercises', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'The heart and lungs work together during ___', options: ['Rest', 'Physical activity', 'Eating', 'Singing'], answer: 'Physical activity', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'One component of physical fitness is ___', options: ['Anger', 'Strength', 'Laughter', 'Weakness'], answer: 'Strength', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'The ability to bend easily is called ___', options: ['Flexibility', 'Speed', 'Balance', 'Agility'], answer: 'Flexibility', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'Hygiene means ___', options: ['Dirty habits', 'Clean habits', 'Shouting', 'Sleeping'], answer: 'Clean habits', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'Bathing regularly is an example of ___', options: ['Bad habit', 'Good hygiene', 'Eating', 'Playing'], answer: 'Good hygiene', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'The best way to care for the skin is to ___', options: ['Avoid water', 'Bathe often', 'Use dirty cloth', 'Ignore it'], answer: 'Bathe often', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'The organ that pumps blood is the ___', options: ['Liver', 'Kidney', 'Heart', 'Brain'], answer: 'Heart', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'The organ of breathing is the ___', options: ['Heart', 'Lungs', 'Stomach', 'Bone'], answer: 'Lungs', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'A first aid box contains ___', options: ['Clothes', 'Drugs and materials', 'Food', 'Toys'], answer: 'Drugs and materials', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'Which of these is NOT a first aid item?', options: ['Bandage', 'Cotton wool', 'Plaster', 'Sugar'], answer: 'Sugar', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'A person who gives first aid is called ___', options: ['First aider', 'Driver', 'Engineer', 'Tailor'], answer: 'First aider', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'To treat a minor cut, you should ___', options: ['Pour sand', 'Wash and bandage', 'Ignore', 'Hit it'], answer: 'Wash and bandage', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'Energy-giving foods are called ___', options: ['Protective foods', 'Body-building foods', 'Carbohydrates', 'Fruits'], answer: 'Carbohydrates', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'Protein foods help the body to ___', options: ['Grow', 'Sleep', 'Cry', 'Complain'], answer: 'Grow', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'Carbohydrate foods include ___', options: ['Beans', 'Rice', 'Water', 'Oil'], answer: 'Rice', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'Malaria is spread by ___', options: ['Air', 'Mosquitoes', 'Sun', 'Wind'], answer: 'Mosquitoes', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'A disease that can be spread from one person to another is called ___', options: ['Communicable disease', 'Internal disease', 'Private illness', 'Spiritual illness'], answer: 'Communicable disease', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'Vaccination helps to ___', options: ['Cause sickness', 'Prevent disease', 'Cause pain', 'Make people weak'], answer: 'Prevent disease', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'The environment means ___', options: ['Only the sky', 'Our surroundings', 'Only houses', 'Only people'], answer: 'Our surroundings', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'Throwing dirt everywhere causes ___', options: ['Cleanliness', 'Pollution', 'Growth', 'Fun'], answer: 'Pollution', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'Good posture means ___', options: ['Slouching', 'Sitting/standing properly', 'Bending anyhow', 'Sleeping'], answer: 'Sitting/standing properly', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'Good posture helps to prevent ___', options: ['Speed', 'Back pain', 'Hunger', 'Laughter'], answer: 'Back pain', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'Sportsmanship teaches us to ___', options: ['Cheat', 'Obey rules', 'Fight', 'Shout'], answer: 'Obey rules', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'Safety rules in sports prevent ___', options: ['Happiness', 'Injuries', 'Winning', 'Running'], answer: 'Injuries', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'Track events include ___', options: ['Running', 'Shot put', 'High jump', 'Discuss throw'], answer: 'Running', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'Field events include ___', options: ['Sprinting', 'Relay', 'Shot put', 'Marathon'], answer: 'Shot put', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'The person who controls a football match is the ___', options: ['Player', 'Coach', 'Referee', 'Fan'], answer: 'Referee', points: 3.33 }
+                ]
+            },
+            {
+                code: 'ENG010',
+                name: 'English Language',
+                password: 'eng123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'The correct spelling is ___.', options: ['Environmant', 'Environment', 'Enviroment', 'Enveronment'], answer: 'Environment', points: 2 },
+                    { id: 2, type: 'mcq', text: 'Which word is correctly spelt?', options: ['Acomodate', 'Accommodate', 'Accommmodate', 'Acommadate'], answer: 'Accommodate', points: 2 },
+                    { id: 3, type: 'mcq', text: 'Choose the correct spelling:', options: ['Recieve', 'Receive', 'Receeve', 'Recive'], answer: 'Receive', points: 2 },
+                    { id: 4, type: 'mcq', text: 'A group of words that makes sense but not complete sense is a ___.', options: ['sentence', 'phrase', 'clause', 'verb'], answer: 'phrase', points: 2 },
+                    { id: 5, type: 'mcq', text: '"He ___ to school every day."', options: ['go', 'goes', 'going', 'gone'], answer: 'goes', points: 2 },
+                    { id: 6, type: 'mcq', text: '"I have ___ my homework."', options: ['finish', 'finishing', 'finished', 'finishes'], answer: 'finished', points: 2 },
+                    { id: 7, type: 'mcq', text: '"The boy is as brave as a lion." This is a ___.', options: ['metaphor', 'simile', 'personification', 'hyperbole'], answer: 'simile', points: 2 },
+                    { id: 8, type: 'mcq', text: '"Time flies." This is a ___.', options: ['metaphor', 'simile', 'personification', 'irony'], answer: 'personification', points: 2 },
+                    { id: 9, type: 'mcq', text: '"My bag weighs a ton." is a ___.', options: ['hyperbole', 'simile', 'metaphor', 'alliteration'], answer: 'hyperbole', points: 2 },
+                    { id: 10, type: 'mcq', text: '"The stars winked at me." is ___.', options: ['hyperbole', 'metaphor', 'personification', 'irony'], answer: 'personification', points: 2 },
+                    { id: 11, type: 'mcq', text: '"Her voice is music to my ears." is a ___.', options: ['metaphor', 'simile', 'hyperbole', 'pun'], answer: 'metaphor', points: 2 },
+                    { id: 12, type: 'mcq', text: '"Busy as a bee" is a ___.', options: ['metaphor', 'simile', 'onomatopoeia', 'personification'], answer: 'simile', points: 2 },
+                    { id: 13, type: 'mcq', text: 'Which is an example of onomatopoeia?', options: ['sweet smell', 'buzz', 'taller than mountains', 'brighter future'], answer: 'buzz', points: 2 },
+                    { id: 14, type: 'mcq', text: '"Peter and Paul ___ coming."', options: ['is', 'are', 'was', 'be'], answer: 'are', points: 2 },
+                    { id: 15, type: 'mcq', text: '"Neither John nor his brothers ___ here."', options: ['is', 'are', 'was', 'be'], answer: 'are', points: 2 },
+                    { id: 16, type: 'mcq', text: 'A verb that shows action is called ___.', options: ['linking verb', 'pointing verb', 'action verb', 'adverb'], answer: 'action verb', points: 2 },
+                    { id: 17, type: 'mcq', text: '"He spoke loudly." The word loudly is an ___.', options: ['adjective', 'adverb', 'noun', 'pronoun'], answer: 'adverb', points: 2 },
+                    { id: 18, type: 'mcq', text: 'A word that describes a noun is an ___.', options: ['verb', 'adjective', 'adverb', 'conjunction'], answer: 'adjective', points: 2 },
+                    { id: 19, type: 'mcq', text: '"Because" is a ___.', options: ['preposition', 'conjunction', 'pronoun', 'adverb'], answer: 'conjunction', points: 2 },
+                    { id: 20, type: 'mcq', text: '"At", "in", "on" are ___.', options: ['nouns', 'verbs', 'prepositions', 'adjectives'], answer: 'prepositions', points: 2 },
+                    { id: 21, type: 'mcq', text: 'Choose the correct collocation:', options: ['make a decision', 'do a decision', 'perform a decision', 'create a decision'], answer: 'make a decision', points: 2 },
+                    { id: 22, type: 'mcq', text: 'Choose the correct collocation:', options: ['do homework', 'make homework', 'create homework', 'build homework'], answer: 'do homework', points: 2 },
+                    { id: 23, type: 'mcq', text: 'Choose the correct collocation:', options: ['heavy rain', 'strong rain', 'loud rain', 'deep rain'], answer: 'heavy rain', points: 2 },
+                    { id: 24, type: 'mcq', text: 'Choose the correct collocation:', options: ['fast food', 'quick food', 'running food', 'speed food'], answer: 'fast food', points: 2 },
+                    { id: 25, type: 'mcq', text: '"She ___ the letter yesterday."', options: ['write', 'writes', 'wrote', 'written'], answer: 'wrote', points: 2 },
+                    { id: 26, type: 'mcq', text: '"They ___ football now."', options: ['play', 'are playing', 'played', 'plays'], answer: 'are playing', points: 2 },
+                    { id: 27, type: 'mcq', text: '"I have been ___ since morning."', options: ['wait', 'waited', 'waiting', 'waits'], answer: 'waiting', points: 2 },
+                    { id: 28, type: 'mcq', text: 'The past tense of teach is ___.', options: ['teached', 'taught', 'teaching', 'teaches'], answer: 'taught', points: 2 },
+                    { id: 29, type: 'mcq', text: 'The comparative form of big is ___.', options: ['biger', 'bigger', 'more big', 'most big'], answer: 'bigger', points: 2 },
+                    { id: 30, type: 'mcq', text: 'The superlative form of good is ___.', options: ['goodest', 'more good', 'best', 'better'], answer: 'best', points: 2 },
+                    { id: 31, type: 'mcq', text: '"A book is on the table." The word book is a ___.', options: ['noun', 'verb', 'adjective', 'adverb'], answer: 'noun', points: 2 },
+                    { id: 32, type: 'mcq', text: 'A sentence that shows strong feeling ends with ___.', options: ['comma', 'full stop', 'exclamation mark', 'question mark'], answer: 'exclamation mark', points: 2 },
+                    { id: 33, type: 'mcq', text: 'A sentence that asks a question is a ___.', options: ['declarative', 'imperative', 'interrogative', 'exclamatory'], answer: 'interrogative', points: 2 },
+                    { id: 34, type: 'mcq', text: '"Close the door." This sentence is ___.', options: ['exclamatory', 'imperative', 'interrogative', 'complex'], answer: 'imperative', points: 2 },
+                    { id: 35, type: 'mcq', text: 'The plural of child is ___.', options: ['childs', 'children', 'childs', 'childes'], answer: 'children', points: 2 },
+                    { id: 36, type: 'mcq', text: 'The opposite of arrival is ___.', options: ['leaving', 'come', 'exit', 'departure'], answer: 'departure', points: 2 },
+                    { id: 37, type: 'mcq', text: 'The synonym of happy is ___.', options: ['sad', 'glad', 'angry', 'tired'], answer: 'glad', points: 2 },
+                    { id: 38, type: 'mcq', text: 'The antonym of brave is ___.', options: ['cowardly', 'strong', 'bold', 'fearless'], answer: 'cowardly', points: 2 },
+                    { id: 39, type: 'mcq', text: '"She sings beautifully." The underlined word describes ___.', options: ['a noun', 'a verb', 'an adjective', 'a preposition'], answer: 'a verb', points: 2 },
+                    { id: 40, type: 'mcq', text: '"The girls cleaned the classroom themselves." The word themselves is a ___.', options: ['personal pronoun', 'reflexive pronoun', 'possessive pronoun', 'demonstrative pronoun'], answer: 'reflexive pronoun', points: 2 },
+                    { id: 41, type: 'mcq', text: '"This" and "that" are ___.', options: ['adverbs', 'determiners', 'pronouns', 'conjunctions'], answer: 'pronouns', points: 2 },
+                    { id: 42, type: 'mcq', text: 'The past tense of go is ___.', options: ['went', 'goed', 'going', 'gone'], answer: 'went', points: 2 },
+                    { id: 43, type: 'mcq', text: '"The boys ___ playing when I arrived."', options: ['is', 'was', 'were', 'are'], answer: 'were', points: 2 },
+                    { id: 44, type: 'mcq', text: '"I prefer tea ___ coffee."', options: ['than', 'over', 'to', 'with'], answer: 'to', points: 2 },
+                    { id: 45, type: 'mcq', text: '"She runs ___ than her sister."', options: ['fastly', 'faster', 'more fast', 'fastest'], answer: 'faster', points: 2 },
+                    { id: 46, type: 'mcq', text: '"Speak the truth." Truth is a ___.', options: ['noun', 'verb', 'adjective', 'adverb'], answer: 'noun', points: 2 },
+                    { id: 47, type: 'mcq', text: '"We arrived ___ Lagos yesterday."', options: ['at', 'in', 'on', 'into'], answer: 'in', points: 2 },
+                    { id: 48, type: 'mcq', text: '"The sun rises in the ___."', options: ['east', 'west', 'north', 'south'], answer: 'east', points: 2 },
+                    { id: 49, type: 'mcq', text: 'The opposite of early is ___.', options: ['quick', 'late', 'slow', 'never'], answer: 'late', points: 2 },
+                    { id: 50, type: 'mcq', text: '"The teacher corrected ___."', options: ['we', 'us', 'our', 'ours'], answer: 'us', points: 2 }
+                ]
+            },
+            {
+                code: 'DIG011',
+                name: 'Digital Technology',
+                password: 'dig123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'Digital technology deals with the use of ___.', options: ['stones', 'electronic devices', 'chalkboard', 'newspapers'], answer: 'electronic devices', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'A computer is an electronic device that ___.', options: ['sleeps', 'stores and processes information', 'cooks food', 'plays football'], answer: 'stores and processes information', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'The physical parts of a computer are called ___.', options: ['software', 'wetware', 'hardware', 'firmware'], answer: 'hardware', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'The programs and apps inside a computer are known as ___.', options: ['wood', 'software', 'machines', 'metal'], answer: 'software', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'Which of the following is an input device?', options: ['monitor', 'keyboard', 'speaker', 'printer'], answer: 'keyboard', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'A device used to display the output from a computer is ___.', options: ['keyboard', 'mouse', 'monitor', 'scanner'], answer: 'monitor', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'Which of the following is used for pointing and selecting items?', options: ['mouse', 'fan', 'cable', 'CPU'], answer: 'mouse', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'CPU stands for ___.', options: ['Central Process Unit', 'Central Processing Unit', 'Computer Processor Utility', 'Control Panel Unit'], answer: 'Central Processing Unit', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'The brain of the computer is the ___.', options: ['mouse', 'monitor', 'CPU', 'speaker'], answer: 'CPU', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'A storage device used to save files permanently is ___.', options: ['RAM', 'Flash drive', 'Calculator', 'Fan'], answer: 'Flash drive', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'RAM means ___.', options: ['Random Access Memory', 'Read and Make', 'Real Access Machine', 'Running Access Monitor'], answer: 'Random Access Memory', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'The icon used to start a computer program is called ___.', options: ['file', 'symbol', 'shortcut', 'ruler'], answer: 'shortcut', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'Information on a computer is also called ___.', options: ['data', 'water', 'metal', 'paper'], answer: 'data', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'A computer virus is ___.', options: ['a drink', 'harmful software', 'a computer teacher', 'a charger'], answer: 'harmful software', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'To protect a computer from virus, you use ___.', options: ['antivirus', 'sugar', 'scissors', 'battery'], answer: 'antivirus', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'Which one is an example of an operating system?', options: ['MS Word', 'Windows', 'Google Chrome', 'WhatsApp'], answer: 'Windows', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The internet is a ___.', options: ['group of disconnected computers', 'global network of computers', 'cooking method', 'type of hardware'], answer: 'global network of computers', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'A browser is used to ___.', options: ['wash plates', 'bake bread', 'access websites', 'sharpen pencils'], answer: 'access websites', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'One example of an internet browser is ___.', options: ['Excel', 'Chrome', 'Paint', 'Camera'], answer: 'Chrome', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'The full meaning of ICT is ___.', options: ['International Computer Test', 'Information and Communication Technology', 'Internal Communication Telephone', 'Internet Control Tool'], answer: 'Information and Communication Technology', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'A safe practice online is ___.', options: ['sharing passwords', 'chatting with strangers', 'reporting suspicious messages', 'downloading anything you see'], answer: 'reporting suspicious messages', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'E-mail is used for ___.', options: ['cooking', 'sending letters electronically', 'sweeping compound', 'fixing cars'], answer: 'sending letters electronically', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'A strong password must contain ___.', options: ['only your name', 'only numbers', 'a mix of letters, numbers, and symbols', 'only one letter'], answer: 'a mix of letters, numbers, and symbols', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'A smartphone is an example of ___.', options: ['analogue device', 'simple machine', 'digital device', 'manual tool'], answer: 'digital device', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'The small picture symbols used on phones are called ___.', options: ['emojis', 'cartons', 'photocopies', 'colours'], answer: 'emojis', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'The act of bullying people online is called ___.', options: ['drawing', 'cyberbullying', 'kite-flying', 'scanning'], answer: 'cyberbullying', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'A computer network in a small area like a school is ___.', options: ['WAN', 'MAN', 'LAN', 'PAN'], answer: 'LAN', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'Google Drive is used for ___.', options: ['selling goods', 'storing files online', 'washing clothes', 'cooking food'], answer: 'storing files online', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'The act of stealing someone\'s online information is ___.', options: ['farming', 'hacking', 'painting', 'walking'], answer: 'hacking', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'The small light on the monitor that shows activity is called ___.', options: ['power indicator', 'timer', 'battery', 'bulb'], answer: 'power indicator', points: 3.33 }
+                ]
+            },
+            {
+                code: 'SOC012',
+                name: 'Social Studies',
+                password: 'soc123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'Social Studies helps us to understand ___.', options: ['plants', 'people and their environment', 'only animals', 'only government'], answer: 'people and their environment', points: 3.33 },
+                    { id: 2, type: 'mcq', text: 'A family is made up of ___.', options: ['only father', 'only mother', 'people related by blood or marriage', 'strangers living together'], answer: 'people related by blood or marriage', points: 3.33 },
+                    { id: 3, type: 'mcq', text: 'The father is the ___ of the family.', options: ['head', 'helper', 'visitor', 'child'], answer: 'head', points: 3.33 },
+                    { id: 4, type: 'mcq', text: 'Which of the following is a type of family?', options: ['Broken family', 'Extended family', 'Foreign family', 'Street family'], answer: 'Extended family', points: 3.33 },
+                    { id: 5, type: 'mcq', text: 'A nuclear family consists of ___.', options: ['father, mother, children', 'grandparents only', 'uncles and aunts', 'cousins only'], answer: 'father, mother, children', points: 3.33 },
+                    { id: 6, type: 'mcq', text: 'Government is the group of people that ___.', options: ['play games', 'rule and make decisions for the country', 'farm all the land', 'build houses'], answer: 'rule and make decisions for the country', points: 3.33 },
+                    { id: 7, type: 'mcq', text: 'The three arms of government include all except ___.', options: ['Executive', 'Judiciary', 'Legislative', 'Agricultural'], answer: 'Agricultural', points: 3.33 },
+                    { id: 8, type: 'mcq', text: 'The Executive arm is headed by the ___.', options: ['Chief Judge', 'President', 'Speaker', 'Governor only'], answer: 'President', points: 3.33 },
+                    { id: 9, type: 'mcq', text: 'Traffic rules help to prevent ___.', options: ['accidents', 'sports', 'farming', 'dancing'], answer: 'accidents', points: 3.33 },
+                    { id: 10, type: 'mcq', text: 'A pedestrian is a person who ___.', options: ['drives a car', 'flies a plane', 'walks on the road', 'rides a motorcycle'], answer: 'walks on the road', points: 3.33 },
+                    { id: 11, type: 'mcq', text: 'Stop road sign is usually in ___ shape.', options: ['round', 'hexagon', 'octagon', 'triangle'], answer: 'octagon', points: 3.33 },
+                    { id: 12, type: 'mcq', text: 'Values are things we ___.', options: ['eat', 'buy', 'believe and cherish', 'can throw away'], answer: 'believe and cherish', points: 3.33 },
+                    { id: 13, type: 'mcq', text: 'Which of the following is a national value?', options: ['cheating', 'honesty', 'stealing', 'fighting'], answer: 'honesty', points: 3.33 },
+                    { id: 14, type: 'mcq', text: 'Discipline means ___.', options: ['doing whatever you want', 'acting without control', 'obeying rules', 'being rude'], answer: 'obeying rules', points: 3.33 },
+                    { id: 15, type: 'mcq', text: 'Who maintains law and order in society?', options: ['Teachers', 'Police', 'Drivers', 'Traders'], answer: 'Police', points: 3.33 },
+                    { id: 16, type: 'mcq', text: 'A community is a group of people who ___.', options: ['never meet', 'live and work together', 'fight every day', 'travel always'], answer: 'live and work together', points: 3.33 },
+                    { id: 17, type: 'mcq', text: 'The main source of local government revenue is ___.', options: ['school fees', 'fines and levies', 'pocket money', 'gifts'], answer: 'fines and levies', points: 3.33 },
+                    { id: 18, type: 'mcq', text: 'The environment includes ___.', options: ['only air', 'only water', 'everything around us', 'only buildings'], answer: 'everything around us', points: 3.33 },
+                    { id: 19, type: 'mcq', text: 'Deforestation is ___.', options: ['planting trees', 'cutting down trees', 'watering trees', 'protecting forests'], answer: 'cutting down trees', points: 3.33 },
+                    { id: 20, type: 'mcq', text: 'Drug abuse means ___.', options: ['playing with drugs', 'using drugs wrongly', 'buying drugs', 'storing drugs'], answer: 'using drugs wrongly', points: 3.33 },
+                    { id: 21, type: 'mcq', text: 'Which of these is a good social habit?', options: ['bullying', 'respect', 'fighting', 'stealing'], answer: 'respect', points: 3.33 },
+                    { id: 22, type: 'mcq', text: 'One of Nigeria\'s national symbols is the ___.', options: ['horse alone', 'Nigerian flag', 'school uniform', 'traffic light'], answer: 'Nigerian flag', points: 3.33 },
+                    { id: 23, type: 'mcq', text: 'The colour green on the Nigerian flag stands for ___.', options: ['peace', 'forest', 'agriculture', 'water'], answer: 'agriculture', points: 3.33 },
+                    { id: 24, type: 'mcq', text: 'A citizen is a person who ___.', options: ['watches TV', 'belongs to a country', 'sleeps in school', 'votes abroad only'], answer: 'belongs to a country', points: 3.33 },
+                    { id: 25, type: 'mcq', text: 'One responsibility of a good citizen is to ___.', options: ['litter the environment', 'pay taxes', 'disobey laws', 'steal public property'], answer: 'pay taxes', points: 3.33 },
+                    { id: 26, type: 'mcq', text: 'Peace means ___.', options: ['violence', 'calmness and harmony', 'war', 'crisis'], answer: 'calmness and harmony', points: 3.33 },
+                    { id: 27, type: 'mcq', text: 'The act of living together in unity is called ___.', options: ['conflict', 'cooperation', 'disobedience', 'bullying'], answer: 'cooperation', points: 3.33 },
+                    { id: 28, type: 'mcq', text: 'Which of the following is a social problem?', options: ['cleanliness', 'hard work', 'drug addiction', 'honesty'], answer: 'drug addiction', points: 3.33 },
+                    { id: 29, type: 'mcq', text: 'The natural resources found in Nigeria include ___.', options: ['gold only', 'crude oil', 'plastic', 'cement'], answer: 'crude oil', points: 3.33 },
+                    { id: 30, type: 'mcq', text: 'One way to protect the environment is to ___.', options: ['dump refuse in gutters', 'burn bushes', 'plant trees', 'pollute rivers'], answer: 'plant trees', points: 3.33 }
+                ]
+            },
+            {
+                code: 'MAT013',
+                name: 'Mathematics',
+                password: 'mat123',
+                duration: 60,
+                questions: [
+                    { id: 1, type: 'mcq', text: 'A trader bought 12 bags of rice at ₦18,500 each. How much did he pay altogether?', options: ['₦210,000', '₦222,000', '₦240,000', '₦250,000'], answer: '₦222,000', points: 2 },
+                    { id: 2, type: 'mcq', text: 'A boy walks 3 km every day for 7 days. How many kilometres does he walk in a week?', options: ['18 km', '20 km', '21 km', '25 km'], answer: '21 km', points: 2 },
+                    { id: 3, type: 'mcq', text: 'If a class has ages: 12, 13, 14, 14, 15, 12, 13, what is the mode?', options: ['12', '13', '14', '15'], answer: '14', points: 2 },
+                    { id: 4, type: 'mcq', text: 'What is the mean of 10, 20, 30, 40, 50?', options: ['20', '25', '30', '35'], answer: '30', points: 2 },
+                    { id: 5, type: 'mcq', text: 'If school closes by 2:15 pm and a student gets home by 3:00 pm, how long was the journey?', options: ['35 mins', '40 mins', '45 mins', '50 mins'], answer: '45 mins', points: 2 },
+                    { id: 6, type: 'mcq', text: 'A man bought 5 shirts for ₦7,800 each. How much did he spend?', options: ['₦35,000', '₦39,000', '₦40,000', '₦41,000'], answer: '₦39,000', points: 2 },
+                    { id: 7, type: 'mcq', text: 'Find the median of the data: 8, 3, 5, 6, 2, 4, 9.', options: ['4', '5', '6', '7'], answer: '5', points: 2 },
+                    { id: 8, type: 'mcq', text: 'One hour 45 minutes is equal to how many minutes?', options: ['90', '100', '105', '115'], answer: '105', points: 2 },
+                    { id: 9, type: 'mcq', text: 'A woman shares ₦12,000 among 3 children in the ratio 2:1:1. How much does the first child get?', options: ['₦4,000', '₦5,000', '₦6,000', '₦8,000'], answer: '₦6,000', points: 2 },
+                    { id: 10, type: 'mcq', text: 'A truck travels 240 km in 4 hours. What is its average speed?', options: ['50 km/hr', '55 km/hr', '60 km/hr', '70 km/hr'], answer: '60 km/hr', points: 2 },
+                    { id: 11, type: 'mcq', text: 'The sum of 12 students\' test scores is 840. What is the mean score?', options: ['65', '70', '75', '80'], answer: '70', points: 2 },
+                    { id: 12, type: 'mcq', text: 'A shop sold 45 oranges in the morning and 28 in the afternoon. How many were sold altogether?', options: ['63', '70', '72', '73'], answer: '73', points: 2 },
+                    { id: 13, type: 'mcq', text: 'Change 345 minutes to hours and minutes.', options: ['5 hr 35 mins', '6 hr 10 mins', '5 hr 45 mins', '4 hr 55 mins'], answer: '5 hr 45 mins', points: 2 },
+                    { id: 14, type: 'mcq', text: 'A student scored 18, 22, 16, 28, and 26. What is the median?', options: ['18', '22', '24', '26'], answer: '22', points: 2 },
+                    { id: 15, type: 'mcq', text: 'A man drives for 2.5 hours at 60 km/hr. What distance does he cover?', options: ['120 km', '130 km', '140 km', '150 km'], answer: '150 km', points: 2 },
+                    { id: 16, type: 'mcq', text: 'What is the range of the data: 5, 9, 12, 14, 7?', options: ['7', '8', '9', '10'], answer: '9', points: 2 },
+                    { id: 17, type: 'mcq', text: 'A tank contains 85 litres of water. If 27 litres are used, how much is left?', options: ['58 L', '60 L', '62 L', '65 L'], answer: '58 L', points: 2 },
+                    { id: 18, type: 'mcq', text: 'A boy spends ₦350 daily. How much does he spend in 15 days?', options: ['₦4,250', '₦5,250', '₦5,500', '₦5,750'], answer: '₦5,250', points: 2 },
+                    { id: 19, type: 'mcq', text: 'What is 2 hours 30 minutes in seconds?', options: ['7200 s', '8000 s', '8400 s', '9000 s'], answer: '9000 s', points: 2 },
+                    { id: 20, type: 'mcq', text: 'If a class of 40 students contains 24 girls, what percentage are girls?', options: ['50%', '55%', '60%', '70%'], answer: '60%', points: 2 },
+                    { id: 21, type: 'mcq', text: 'The ages of 6 boys are: 11, 12, 13, 14, 12, 15. What is the mode?', options: ['11', '12', '13', '14'], answer: '12', points: 2 },
+                    { id: 22, type: 'mcq', text: 'A book originally cost ₦2,400 but now costs ₦1,800. How much was reduced?', options: ['₦400', '₦500', '₦600', '₦700'], answer: '₦600', points: 2 },
+                    { id: 23, type: 'mcq', text: 'A train leaves at 6:35 am and arrives at 9:05 am. How long was the journey?', options: ['2 hr 20 mins', '2 hr 30 mins', '2 hr 40 mins', '3 hr'], answer: '2 hr 30 mins', points: 2 },
+                    { id: 24, type: 'mcq', text: 'Find the range of: 18, 25, 12, 30, 22.', options: ['12', '15', '18', '20'], answer: '18', points: 2 },
+                    { id: 25, type: 'mcq', text: 'A farmer harvests 1560 yams in 12 days. How many did he harvest per day?', options: ['100', '120', '130', '150'], answer: '130', points: 2 },
+                    { id: 26, type: 'mcq', text: 'A school has 750 students. If 300 are boys, what fraction are boys?', options: ['1/3', '2/5', '3/5', '1/2'], answer: '2/5', points: 2 },
+                    { id: 27, type: 'mcq', text: 'What is the mean of: 7, 9, 10, 14?', options: ['8', '9', '10', '11'], answer: '10', points: 2 },
+                    { id: 28, type: 'mcq', text: 'A man uses 3 litres of fuel every 20 km. How much fuel is needed for 100 km?', options: ['10 L', '12 L', '13 L', '15 L'], answer: '15 L', points: 2 },
+                    { id: 29, type: 'mcq', text: 'A student saves ₦150 daily. How much after 45 days?', options: ['₦6,250', '₦6,500', '₦6,750', '₦7,000'], answer: '₦6,750', points: 2 },
+                    { id: 30, type: 'mcq', text: 'Convert 4.5 hours to minutes.', options: ['240 mins', '250 mins', '260 mins', '270 mins'], answer: '270 mins', points: 2 }
+                ]
+            }
+        ];
+
+        // Initialize the application
+        function init() {
+            localStorage.setItem('dms_subjects', JSON.stringify(allSubjects));
+            checkExistingUser();
+        }
+
+        // User Management
+        function checkExistingUser() {
+            const users = JSON.parse(localStorage.getItem('dms_users') || '[]');
+            if (users.length > 0) {
+                showDashboard(users[0]);
+            }
+        }
+
+        function showSignup() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('signupScreen').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('signupScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        function signup() {
+            const fullName = document.getElementById('fullName').value;
+            const studentCode = document.getElementById('newStudentCode').value;
+            const password = document.getElementById('newPassword').value;
+
+            if (!fullName || !studentCode || !password) {
+                showNotification('Please fill all fields', 'warning');
+                return;
+            }
+
+            if (!studentCode.match(/^DMS\d{3}$/)) {
+                showNotification('Student code must be in format DMS001', 'warning');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('dms_users') || '[]');
+            
+            if (users.find(u => u.studentCode === studentCode)) {
+                showNotification('Student code already exists', 'warning');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                fullName,
+                studentCode,
+                password,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('dms_users', JSON.stringify(users));
+            localStorage.setItem('dms_current_user', JSON.stringify(newUser));
+
+            showDashboard(newUser);
+            showNotification('Account created successfully!', 'success');
+        }
+
+        function login() {
+            const studentCode = document.getElementById('studentCode').value;
+            const password = document.getElementById('password').value;
+
+            const users = JSON.parse(localStorage.getItem('dms_users') || '[]');
+            const user = users.find(u => u.studentCode === studentCode && u.password === password);
+
+            if (user) {
+                localStorage.setItem('dms_current_user', JSON.stringify(user));
+                showDashboard(user);
+                showNotification('Login successful!', 'success');
+            } else {
+                showNotification('Invalid student code or password', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('dms_current_user');
+            currentUser = null;
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        function showDashboard(user) {
+            currentUser = user;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('signupScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('userName').textContent = user.fullName;
+            
+            showSubjects();
+            loadHistory();
+        }
+
+        // Subject Management
+        function showSubjects() {
+            document.getElementById('subjectsView').classList.remove('hidden');
+            document.getElementById('historyView').classList.add('hidden');
+            
+            const subjects = JSON.parse(localStorage.getItem('dms_subjects') || '[]');
+            const grid = document.getElementById('subjectsGrid');
+            grid.innerHTML = '';
+
+            subjects.forEach(subject => {
+                const attempts = getUserAttempts(currentUser.studentCode, subject.code);
+                const canAttempt = attempts.length === 0; // Simple logic - can modify for multiple attempts
+
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `
+                    <h3>${subject.name}</h3>
+                    <p>Code: ${subject.code}</p>
+                    <p>Duration: ${subject.duration} minutes</p>
+                    ${!canAttempt ? '<p style="color: #f39c12;"><strong>Already Attempted</strong></p>' : ''}
+                `;
+                
+                if (canAttempt) {
+                    card.onclick = () => startSubjectAuth(subject);
+                }
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function startSubjectAuth(subject) {
+            currentExam = subject;
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('subjectAuth').classList.remove('hidden');
+            document.getElementById('subjectName').textContent = subject.name;
+        }
+
+        function cancelAuth() {
+            document.getElementById('subjectAuth').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            currentExam = null;
+        }
+
+        function startExam() {
+            const subjectNumber = document.getElementById('subjectNumber').value;
+            const subjectPassword = document.getElementById('subjectPassword').value;
+
+            if (subjectNumber !== currentExam.code || subjectPassword !== currentExam.password) {
+                showNotification('Invalid subject number or password', 'error');
+                return;
+            }
+
+            // Load questions for this subject
+            loadExamQuestions(currentExam.code);
+            
+            document.getElementById('subjectAuth').classList.add('hidden');
+            document.getElementById('examScreen').classList.remove('hidden');
+            document.getElementById('examSubjectName').textContent = currentExam.name;
+            
+            timeRemaining = currentExam.duration * 60;
+            startTimer();
+            displayQuestion(0);
+        }
+
+        // Exam Questions and Logic
+        function loadExamQuestions(subjectCode) {
+            const subjects = JSON.parse(localStorage.getItem('dms_subjects') || '[]');
+            const subject = subjects.find(s => s.code === subjectCode);
+            if (subject) {
+                currentQuestions = subject.questions;
+            }
+        }
+
+        function displayQuestion(index) {
+            const container = document.getElementById('questionsContainer');
+            const question = currentQuestions[index];
+            
+            let questionHtml = `
+                <div class="question-card">
+                    <h3 style="margin-bottom: 15px;">Question ${index + 1} of ${currentQuestions.length}</h3>
+                    <p style="font-size: 18px; margin-bottom: 20px;">${question.text}</p>
+            `;
+
+            question.options.forEach((option, i) => {
+                const isChecked = userAnswers[question.id] === option;
+                const optionLetter = String.fromCharCode(65 + i); // A, B, C, D
+                questionHtml += `
+                    <label class="option-label ${isChecked ? 'selected' : ''}">
+                        <input type="radio" name="answer_${question.id}" value="${option}" 
+                               ${isChecked ? 'checked' : ''} onchange="saveAnswer(${question.id}, '${option}')">
+                        ${optionLetter}. ${option}
+                    </label>
+                `;
+            });
+
+            questionHtml += '</div>';
+            container.innerHTML = questionHtml;
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').classList.toggle('hidden', index === 0);
+            document.getElementById('nextBtn').classList.toggle('hidden', index === currentQuestions.length - 1);
+            document.getElementById('submitBtn').classList.toggle('hidden', index !== currentQuestions.length - 1);
+
+            // Update progress
+            const progress = ((index + 1) / currentQuestions.length) * 100;
+            document.getElementById('examProgress').style.width = `${progress}%`;
+        }
+
+        function saveAnswer(questionId, answer) {
+            userAnswers[questionId] = answer;
+            
+            // Update visual selection
+            const labels = document.querySelectorAll('.option-label');
+            labels.forEach(label => {
+                label.classList.remove('selected');
+                const radio = label.querySelector('input[type="radio"]');
+                if (radio && radio.checked) {
+                    label.classList.add('selected');
+                }
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Timer and Auto-submit
+        function startTimer() {
+            updateTimerDisplay();
+            examTimer = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    autoSubmitExam();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('examTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when time is running out
+            if (timeRemaining < 300) { // 5 minutes
+                document.getElementById('examTimer').style.color = '#e74c3c';
+            }
+        }
+
+        function autoSubmitExam() {
+            clearInterval(examTimer);
+            showNotification('Time has expired! Your exam has been submitted automatically.', 'warning');
+            submitExam(true);
+        }
+
+        function submitExam(isAutoSubmit = false) {
+            clearInterval(examTimer);
+            
+            // Calculate score
+            const score = calculateScore();
+            const totalPoints = currentQuestions.reduce((sum, q) => sum + q.points, 0);
+            
+            // Save attempt
+            saveAttempt(score, totalPoints, isAutoSubmit);
+            
+            // Show score notification
+            showScoreNotification(score, totalPoints, isAutoSubmit);
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            
+            currentQuestions.forEach(question => {
+                const userAnswer = userAnswers[question.id];
+                
+                if (userAnswer === question.answer) {
+                    totalScore += question.points;
+                }
+            });
+            
+            return Math.round(totalScore * 100) / 100; // Round to 2 decimal places
+        }
+
+        function saveAttempt(score, totalPoints, isAutoSubmit) {
+            const attempt = {
+                id: Date.now(),
+                studentCode: currentUser.studentCode,
+                subjectCode: currentExam.code,
+                subjectName: currentExam.name,
+                score,
+                totalPoints,
+                answers: {...userAnswers},
+                timestamp: new Date().toISOString(),
+                isAutoSubmit,
+                timeSpent: (currentExam.duration * 60) - timeRemaining
+            };
+            
+            const attempts = JSON.parse(localStorage.getItem('dms_attempts') || '[]');
+            attempts.push(attempt);
+            localStorage.setItem('dms_attempts', JSON.stringify(attempts));
+        }
+
+        function showScoreNotification(score, totalPoints, isAutoSubmit) {
+            document.getElementById('examScreen').classList.add('hidden');
+            
+            const notification = document.getElementById('scoreNotification');
+            const finalScore = document.getElementById('finalScore');
+            const scoreMessage = document.getElementById('scoreMessage');
+            
+            finalScore.textContent = `${score}/${totalPoints}`;
+            
+            if (isAutoSubmit) {
+                scoreMessage.textContent = `Time expired! Your answers have been automatically submitted.`;
+            } else {
+                scoreMessage.textContent = `Congratulations, ${currentUser.fullName}! You have completed the exam.`;
+            }
+            
+            notification.classList.remove('hidden');
+            setTimeout(() => notification.classList.add('show'), 100);
+        }
+
+        function closeScore() {
+            document.getElementById('scoreNotification').classList.add('hidden');
+            document.getElementById('scoreNotification').classList.remove('show');
+            document.getElementById('dashboard').classList.remove('hidden');
+            
+            // Reset exam state
+            currentExam = null;
+            currentQuestions = [];
+            currentQuestionIndex = 0;
+            userAnswers = {};
+        }
+
+        // History Management
+        function showHistory() {
+            document.getElementById('subjectsView').classList.add('hidden');
+            document.getElementById('historyView').classList.remove('hidden');
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            const attempts = getUserAttempts(currentUser.studentCode);
+            
+            if (attempts.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; padding: 40px;">No exam history found.</p>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            attempts.forEach(attempt => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <h4>${attempt.subjectName} (${attempt.subjectCode})</h4>
+                    <p>Score: ${attempt.score}/${attempt.totalPoints}</p>
+                    <p>Date: ${new Date(attempt.timestamp).toLocaleDateString()}</p>
+                    <p>Time Spent: ${Math.floor(attempt.timeSpent / 60)}:${(attempt.timeSpent % 60).toString().padStart(2, '0')}</p>
+                    ${attempt.isAutoSubmit ? '<p style="color: #e74c3c;"><strong>Auto-submitted</strong></p>' : ''}
+                `;
+                historyList.appendChild(item);
+            });
+        }
+
+        function getUserAttempts(studentCode, subjectCode = null) {
+            const attempts = JSON.parse(localStorage.getItem('dms_attempts') || '[]');
+            return attempts.filter(attempt => {
+                if (attempt.studentCode !== studentCode) return false;
+                if (subjectCode && attempt.subjectCode !== subjectCode) return false;
+                return true;
+            });
+        }
+
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            // Simple notification implementation
+            alert(`${type.toUpperCase()}: ${message}`);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
